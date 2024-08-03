@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Magnesium Athletes Store</string>
+    <string name="home">Home</string>
+    <string name="collections">Collections</string>
+    <string name="products">Products</string>
+    <string name="about">About</string>
+    <string name="cart">Cart</string>
+    <string name="contact">Contact</string>
+    <string name="splash_message">Welcome to Magnesium Athletes Store</string>
+</resources>
