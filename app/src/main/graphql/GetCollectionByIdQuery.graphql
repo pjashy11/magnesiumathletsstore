@@ -1,0 +1,38 @@
+query GetCollectionById($id: ID!) {
+    node(id: $id) {
+        ... on Collection {
+            id
+            title
+            description
+            image {
+                src
+            }
+            products(first: 10) {
+                edges {
+                    node {
+                        id
+                        title
+                        description
+                        images(first: 1) {
+                            edges {
+                                node {
+                                    src
+                                }
+                            }
+                        }
+                        variants(first: 1) {
+                            edges {
+                                node {
+                                    price {
+                                        amount
+                                        currencyCode
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

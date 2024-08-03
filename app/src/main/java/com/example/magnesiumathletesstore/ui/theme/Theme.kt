@@ -5,31 +5,35 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.text.TextStyle
 
 private val DarkColorPalette = darkColorScheme(
     primary = PrimaryColor,
+    primaryContainer = PrimaryVariantColor,
+    onPrimary = OnPrimaryColor,
     secondary = SecondaryColor,
+    secondaryContainer = SecondaryVariantColor,
+    onSecondary = OnSecondaryColor,
     background = Color.Black,
-    surface = Color.DarkGray,
-    onPrimary = Color.White,
-    onSecondary = Color.Black,
     onBackground = Color.White,
+    surface = Color.DarkGray,
     onSurface = Color.White
 )
 
 private val LightColorPalette = lightColorScheme(
     primary = PrimaryColor,
+    primaryContainer = PrimaryVariantColor,
+    onPrimary = OnPrimaryColor,
     secondary = SecondaryColor,
-    background = Color.White,
-    surface = Color.LightGray,
-    onPrimary = Color.Black,
-    onSecondary = Color.White,
+    secondaryContainer = SecondaryVariantColor,
+    onSecondary = OnSecondaryColor,
+    background = BackgroundColor,
     onBackground = Color.Black,
+    surface = Color.LightGray,
     onSurface = Color.Black
 )
 

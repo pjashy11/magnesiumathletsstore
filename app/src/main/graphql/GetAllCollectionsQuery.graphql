@@ -1,0 +1,14 @@
+query GetAllCollections {
+    collections(first: 10) {
+        edges {
+            node {
+                id
+                title
+                description
+                image {
+                    src
+                }
+            }
+        }
+    }
+}

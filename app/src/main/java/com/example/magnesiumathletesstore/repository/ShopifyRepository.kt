@@ -1,86 +1,37 @@
 package com.example.magnesiumathletesstore.repository
 
-import com.shopify.buy3.GraphClient
-import com.shopify.buy3.Storefront
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import com.apollographql.apollo.ApolloClient
+import com.example.magnesiumathletesstore.GetAllProductsQuery
+import com.example.magnesiumathletesstore.GetAllCollectionsQuery
+import com.example.magnesiumathletesstore.GetCollectionByIdQuery
+import com.example.magnesiumathletesstore.GetProductByIdQuery
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class ShopifyRepository @Inject constructor(
-    private val graphClient: GraphClient
+    private val apolloClient: ApolloClient
 ) {
-
-    suspend fun getAllProducts(): List<Storefront.Product> = withContext(Dispatchers.IO) {
-        val query = Storefront.query { rootQuery ->
-            rootQuery.products({ args -> args.first(10) }) { productConnectionQuery ->
-                productConnectionQuery.edges { productEdgeQuery ->
-                    productEdgeQuery.node { productQuery ->
-                        productQuery
-                            .id()
-                            .title()
-                            .description()
-                            .images({ args -> args.first(1) }) { imageConnectionQuery ->
-                                imageConnectionQuery.edges { imageEdgeQuery ->
-                                    imageEdgeQuery.node { imageQuery ->
-                                        imageQuery.src()
-                                    }
-                                }
-                            }
-                            .variants({ args -> args.first(1) }) { variantConnectionQuery ->
-                                variantConnectionQuery.edges { variantEdgeQuery ->
-                                    variantEdgeQuery.node { productVariantQuery ->
-                                        productVariantQuery.price()
-                                    }
-                                }
-                            }
-                    }
-                }
-            }
-        }
-
-        val call = graphClient.queryGraph(query)
-        val response = call.execute()
-
-        if (response.hasErrors()) {
-            throw Exception("GraphQL errors: ${response.errors()}")
-        }
-
-        response.data()?.products()?.edges()?.map { it.node } ?: emptyList()
+    suspend fun getAllProducts(): List<GetAllProductsQuery.Edge?> {
+        val response = apolloClient.query(GetAllProductsQuery()).execute()
+        return response.data?.products?.edges?.filterNotNull() ?: emptyList()
     }
 
-    suspend fun getProductById(productId: String): Storefront.Product? = withContext(Dispatchers.IO) {
-        val query = Storefront.query { rootQuery ->
-            rootQuery.node(Storefront.ID(productId)) { nodeQuery ->
-                nodeQuery.onProduct { productQuery ->
-                    productQuery
-                        .id()
-                        .title()
-                        .description()
-                        .images({ args -> args.first(1) }) { imageConnectionQuery ->
-                            imageConnectionQuery.edges { imageEdgeQuery ->
-                                imageEdgeQuery.node { imageQuery ->
-                                    imageQuery.src()
-                                }
-                            }
-                        }
-                        .variants({ args -> args.first(1) }) { variantConnectionQuery ->
-                            variantConnectionQuery.edges { variantEdgeQuery ->
-                                variantEdgeQuery.node { productVariantQuery ->
-                                    productVariantQuery.price()
-                                }
-                            }
-                        }
-                }
-            }
-        }
+    suspend fun getAllCollections(): List<GetAllCollectionsQuery.Edge?> {
+        val response = apolloClient.query(GetAllCollectionsQuery()).execute()
+        return response.data?.collections?.edges?.filterNotNull() ?: emptyList()
+    }
 
-        val call = graphClient.queryGraph(query)
-        val response = call.execute()
+    fun getProductById(productId: String): Flow<GetProductByIdQuery.Node?> = flow {
+        println("Querying product with ID: $productId")
+        val response = apolloClient.query(GetProductByIdQuery(productId)).execute()
+        emit(response.data?.node)
+    }
 
-        if (response.hasErrors()) {
-            throw Exception("GraphQL errors: ${response.errors()}")
-        }
-
-        response.data()?.node() as? Storefront.Product
+    fun getCollectionById(collectionId: String): Flow<GetCollectionByIdQuery.Node?> = flow {
+        println("Querying collection with ID: $collectionId")
+        val response = apolloClient.query(GetCollectionByIdQuery(collectionId)).execute()
+        emit(response.data?.node)
     }
 }
+
